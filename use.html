@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Slide — Mobile Navigation Stack (PDA)</title>
+<style>
+  html,body{height:100%;margin:0;background:#0f1724;color:#e6eef8;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  .slide{box-sizing:border-box;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
+  .card{width:1280px;max-width:calc(100% - 64px);height:720px;background:linear-gradient(180deg,#071032 0%, #0b1530 100%);border-radius:14px;padding:34px;box-shadow:0 20px 60px rgba(2,6,23,0.6);display:grid;grid-template-columns:1fr 520px;gap:28px}
+  .left{padding:8px}
+  h1{margin:0 0 12px;font-size:36px;color:#aee7ff}
+  h2{margin:8px 0 16px;font-size:20px;color:#d4f1ff;font-weight:600}
+  p{margin:8px 0;font-size:16px;color:#cfefff;line-height:1.45}
+  .mini{font-size:14px;color:#9fcbe0;margin-top:16px}
+  ul{margin:10px 0 0 18px;color:#cfefff}
+  li{margin:6px 0}
+  .right{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+  .phone{width:280px;height:540px;background:linear-gradient(180deg,#ffffff08,#00000010);border-radius:34px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;align-items:center}
+  .screen{width:100%;height:100%;background:linear-gradient(180deg,#06172b,#07314f);border-radius:18px;position:relative;overflow:hidden;padding:18px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+  .stack-visual{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;display:flex;flex-direction:column;align-items:center;gap:10px;width:84%}
+  .card-screen{width:100%;height:86px;border-radius:12px;background:linear-gradient(90deg,#0b2b4a,#06304d);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#e6f7ff;box-shadow:0 6px 18px rgba(0,0,0,0.45);opacity:0.98;transform-origin:50% 100%}
+  .label{font-size:13px;color:#9fcbe0;margin-bottom:8px}
+  .controls{display:flex;gap:8px;margin-top:6px}
+  button{background:#0ea5a9;border:0;padding:10px 14px;border-radius:10px;color:#042023;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(10,160,160,0.12)}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfefff}
+  .anim-push{animation:pushIn 360ms cubic-bezier(.2,.9,.2,1)}
+  .anim-pop{animation:popOut 360ms cubic-bezier(.2,.9,.2,1)}
+  @keyframes pushIn { from{transform:translateY(30px) scale(0.98);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
+  @keyframes popOut { from{transform:translateY(0) scale(1);opacity:1} to{transform:translateY(40px) scale(0.96);opacity:0} }
+  .foot{font-size:13px;color:#8fbfd6;margin-top:10px}
+  @media (max-width:1300px){ .card{grid-template-columns:1fr 420px} }
+  @media (max-width:920px){ .card{grid-template-columns:1fr} .right{order:-1} .phone{margin:0 auto} }
+</style>
+</head>
+<body>
+  <div class="slide">
+    <div class="card" role="main" aria-label="Single slide: Mobile navigation stack example">
+      
+      <!-- LEFT: Updated slide text -->
+      <div class="left">
+        <h1>📱 Mobile App Navigation Stack</h1>
+        <h2>Real-World Use Case of PDA</h2>
+
+        <p>
+          In every mobile app, the navigation between screens (like <b>Home → Profile → Settings</b>) is managed using a 
+          <b>stack-based system</b>. Each time a user opens a new screen, it is <b>pushed</b> onto the stack. 
+          When the user presses the <b>Back</b> button, the top screen is <b>popped</b> and control returns to the previous screen.
+        </p>
+
+        <p>
+          This behavior exactly mirrors how a <b>Pushdown Automaton (PDA)</b> works — using stack memory to 
+          <b>store, retrieve, and manage previous states</b> efficiently.
+        </p>
+
+        <div class="label">Example Flow</div>
+        <ul>
+          <li>Home → Profile → Settings</li>
+          <li><b>Push(Profile)</b>, <b>Push(Settings)</b></li>
+          <li>Back → <b>Pop(Settings)</b> → Profile</li>
+          <li>Back → <b>Pop(Profile)</b> → Home</li>
+        </ul>
+
+        <div class="mini">
+          💡 <b>Why PDA Fits:</b>  
+          The PDA’s stack memory enables smooth backward navigation, preserving screen history — something a simple finite automaton cannot do.
+        </div>
+
+        <div class="foot">Used in: Instagram · YouTube · Flipkart · WhatsApp</div>
+      </div>
+
+      <!-- RIGHT: animated visual -->
+      <div class="right">
+        <div class="phone" aria-hidden="false">
+          <div class="screen" id="phoneScreen">
+            <div style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:800;color:#bfeaff">AppName</div>
+              <div style="font-size:12px;color:#8fbfd6">Navigation Stack</div>
+            </div>
+
+            <div id="currentLarge" style="margin-top:36px;font-size:28px;color:#e6f7ff;font-weight:800">Home</div>
+
+            <div class="stack-visual" id="stackVisual" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div class="controls">
+            <button id="pushProfile">Push → Profile</button>
+            <button id="pushSettings">Push → Settings</button>
+            <button id="backBtn" class="ghost">Back (Pop)</button>
+            <button id="autoBtn" class="ghost">Auto</button>
+          </div>
+          <div class="label" style="margin-top:8px">Click to simulate PDA stack operations visually.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const stackVisual = document.getElementById('stackVisual');
+  const currentLarge = document.getElementById('currentLarge');
+  const pushProfile = document.getElementById('pushProfile');
+  const pushSettings = document.getElementById('pushSettings');
+  const backBtn = document.getElementById('backBtn');
+  const autoBtn = document.getElementById('autoBtn');
+
+  let stack = ['Home'];
+
+  function render(){
+    const top = stack[stack.length-1] || 'Home';
+    currentLarge.textContent = top;
+    stackVisual.innerHTML = '';
+    for (let i = 0; i < stack.length; i++) {
+      const name = stack[i];
+      const div = document.createElement('div');
+      div.className = 'card-screen';
+      div.textContent = name;
+      const scale = 1 - (stack.length - 1 - i) * 0.04;
+      div.style.transform = `scale(${scale}) translateY(${(stack.length - 1 - i) * 6}px)`;
+      div.style.opacity = 0.95 - (stack.length - 1 - i) * 0.05;
+      if (i === stack.length - 1) div.classList.add('anim-push');
+      stackVisual.appendChild(div);
+    }
+  }
+
+  function push(screenName){
+    stack.push(screenName);
+    render();
+  }
+
+  function pop(){
+    if (stack.length <= 1) return;
+    const removed = stack.pop();
+    render();
+    const popped = document.createElement('div');
+    popped.className = 'card-screen anim-pop';
+    popped.style.position = 'absolute';
+    popped.style.bottom = '40px';
+    popped.style.left = '50%';
+    popped.style.transform = 'translateX(-50%)';
+    popped.style.width = '84%';
+    popped.style.pointerEvents = 'none';
+    popped.textContent = removed;
+    document.getElementById('phoneScreen').appendChild(popped);
+    setTimeout(()=> popped.remove(), 450);
+  }
+
+  pushProfile.addEventListener('click', ()=> push('Profile'));
+  pushSettings.addEventListener('click', ()=> push('Settings'));
+  backBtn.addEventListener('click', ()=> pop());
+
+  let autoRunning = false;
+  autoBtn.addEventListener('click', () => {
+    if (autoRunning) { autoRunning = false; autoBtn.textContent = 'Auto'; return; }
+    autoRunning = true; autoBtn.textContent = 'Stop';
+    const seq = [
+      () => push('Profile'),
+      () => setTimeout(()=> push('Settings'), 500),
+      () => setTimeout(()=> pop(), 1100),
+      () => setTimeout(()=> pop(), 1600),
+    ];
+    let i = 0;
+    seq[i++]();
+    const timer = setInterval(()=>{
+      if (!autoRunning || i >= seq.length) { clearInterval(timer); autoRunning=false; autoBtn.textContent='Auto'; return; }
+      seq[i++]();
+    }, 700);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

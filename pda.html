@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPDA Example - Palindrome WCWR</title>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 40px;
+        color: #222;
+    }
+    .container {
+        background-color: #fff;
+        padding: 25px 40px;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        max-width: 900px;
+        margin: auto;
+    }
+    h1 {
+        text-align: center;
+        color: #0056b3;
+        margin-bottom: 10px;
+    }
+    h2 {
+        color: #333;
+        border-left: 5px solid #007bff;
+        padding-left: 10px;
+    }
+    p {
+        text-align: justify;
+        line-height: 1.6;
+    }
+    .box {
+        background: #eef5ff;
+        border-left: 4px solid #007bff;
+        padding: 10px 20px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+    }
+    .transition {
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        padding: 10px 20px;
+        margin-top: 10px;
+    }
+    code {
+        background-color: #f0f0f0;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-size: 15px;
+        color: #000;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>DPDA Example — Palindrome WCW<sup>R</sup></h1>
+
+    <div class="box">
+        <h2>Language Definition</h2>
+        <p>
+            The language consists of all strings that are of the form 
+            <b>W c W<sup>R</sup></b>, where <b>W</b> is any string of <b>{a, b}*</b> 
+            and <b>W<sup>R</sup></b> represents the reverse of W.
+        </p>
+        <p><b>L = { W c W<sup>R</sup> | W ∈ {a, b}* }</b></p>
+    </div>
+
+    <div class="box">
+        <h2>Formal Definition</h2>
+        <p>
+            The Deterministic Pushdown Automata (DPDA) for this language is defined as:
+        </p>
+        <p>
+            M = ( Q, Σ, Γ, δ, q<sub>0</sub>, Z<sub>0</sub>, F )
+        </p>
+        <p>
+            Where:<br>
+            Q = { q<sub>0</sub>, q<sub>1</sub>, q<sub>2</sub>, q<sub>3</sub> }<br>
+            Σ = { a, b, c }<br>
+            Γ = { a, b, Z<sub>0</sub> }<br>
+            Start state: q<sub>0</sub><br>
+            Initial stack symbol: Z<sub>0</sub><br>
+            Final state: q<sub>3</sub>
+        </p>
+    </div>
+
+    <div class="box">
+        <h2>Conceptual Description</h2>
+        <p>
+            This DPDA checks if a given string follows the palindrome pattern separated by a center symbol ‘c’. 
+            It works in three main phases:
+        </p>
+        <ul>
+            <li><b>Push Phase (q₁):</b> The automaton reads W and pushes each symbol onto the stack.</li>
+            <li><b>Pivot Phase (q₂):</b> Upon reading the center marker ‘c’, it switches from push mode to match mode.</li>
+            <li><b>Match Phase (q₂ → q₃):</b> For every symbol in W<sup>R</sup>, the automaton pops and matches the stack top. 
+                If the stack is empty when input ends, the string is accepted.</li>
+        </ul>
+    </div>
+
+    <div class="box">
+        <h2>Transition Rules</h2>
+        <div class="transition">
+            <p><b>1. Initialize Stack:</b><br>
+                ( q<sub>0</sub>, ε, ε ) → ( q<sub>1</sub>, Z<sub>0</sub> )
+            </p>
+            <p><b>2. Push Phase:</b><br>
+                ( q<sub>1</sub>, a, ε ) → ( q<sub>1</sub>, a )<br>
+                ( q<sub>1</sub>, a, a ) → ( q<sub>1</sub>, aa )<br>
+                ( q<sub>1</sub>, a, b ) → ( q<sub>1</sub>, ab )<br>
+                ( q<sub>1</sub>, b, a ) → ( q<sub>1</sub>, ba )<br>
+                ( q<sub>1</sub>, b, b ) → ( q<sub>1</sub>, bb )
+            </p>
+            <p><b>3. Pivot Phase:</b><br>
+                ( q<sub>1</sub>, c, a ) → ( q<sub>2</sub>, a )<br>
+                ( q<sub>1</sub>, c, b ) → ( q<sub>2</sub>, b )
+            </p>
+            <p><b>4. Match Phase:</b><br>
+                ( q<sub>2</sub>, a, a ) → ( q<sub>2</sub>, ε )<br>
+                ( q<sub>2</sub>, b, b ) → ( q<sub>2</sub>, ε )
+            </p>
+            <p><b>5. Accept:</b><br>
+                ( q<sub>2</sub>, ε, Z<sub>0</sub> ) → ( q<sub>3</sub>, ε )
+            </p>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>Conclusion</h2>
+        <p>
+            Hence, the DPDA successfully recognizes all strings of the form 
+            <b>W c W<sup>R</sup></b>. It uses the stack to store the first half 
+            and then verifies its mirror structure after the center symbol.
+        </p>
+    </div>
+</div>
+</body>
+</html>
